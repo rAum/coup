@@ -6,10 +6,10 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :coup_game, CoupGame.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "coup_game_app_user",
+  password: "kurczakiMALE2",
   hostname: "localhost",
-  database: "coup_game_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "coup_game", #_test {System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
