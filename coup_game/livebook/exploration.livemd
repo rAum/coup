@@ -1,0 +1,62 @@
+# Exploration livebook
+
+```elixir
+
+```
+
+## Card deck
+
+Change livebook settings to connect to mix coup_game project first.
+
+```elixir
+alias CoupGame.Carddeck
+
+deck = Carddeck.generate_carddeck()
+Carddeck.expand_cards(deck)
+```
+
+```elixir
+defmodule Deck do
+  def generate() do
+    all_card_types = [:card_duke, :card_assasin, :card_contessa, :card_captain, :card_ambassador]
+
+    all_card_types
+    |> Enum.map(fn x -> List.duplicate(x, 3) end)
+    |> List.flatten()
+    |> Enum.shuffle()
+    |> Enum.with_index()
+  end
+end
+```
+
+```elixir
+deck = Deck.generate()
+```
+
+```elixir
+[a | _] = deck
+a
+```
+
+```elixir
+player_count = 4
+{player_cards, court_deck} = deck |> Enum.split(player_count * 2)
+player_cards = player_cards |> Enum.chunk_every(2)
+```
+
+```elixir
+game_state = %{
+  court_deck: court_deck,
+  player_cards: player_cards
+}
+```
+
+```elixir
+Enum.split(game_state.court_deck, 3)
+```
+
+```elixir
+%{game_state | court_deck: Enum.split(game_state.court_deck, 3) |> elem(1)}
+```
+
+## Section
