@@ -1,0 +1,27 @@
+{
+  "configurations": [
+  {
+    "type": "mix_task",
+    "request": "launch",
+    "name": "Launch phoenix server",
+    "task": "phx.server",
+    "taskArgs": [],
+    "projectDir": "${workspaceRoot}/coup_game"
+  },
+  {
+    "type": "mix_task",
+    "request": "launch",
+    "name": "Run tests",
+    "task": "test",
+    "taskArgs": [
+      "--trace"
+    ],
+    "startApps": true,
+    "projectDir": "${workspaceRoot}/coup_game",
+    "requireFiles": [
+      "test/**/test_helper.exs",
+      "test/**/*_test.exs",
+    ],
+  }
+  ]
+}
