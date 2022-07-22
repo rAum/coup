@@ -47,7 +47,11 @@ defmodule CoupGameWeb.GameRoomLive do
     <% end %>
     </ul>
     </div>
+    <%=
+      user_count = @user_list |> length
+      if user_count >= 2 and user_count <= 5 do%>
     <button>Start game</button>
+    <% end %>
     </section>
     """
   end
