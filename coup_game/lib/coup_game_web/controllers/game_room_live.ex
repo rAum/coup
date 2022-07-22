@@ -1,27 +1,30 @@
 defmodule CoupGameWeb.GameRoomLive do
   use CoupGameWeb, :live_view
-  use Phoenix.Presence,
-    otp_app: :room_presence,
-    pubsub_server: CoupGame.PubSub
-
+  alias CoupGameWeb.PlayerPresence
   require Logger
 
   @impl true
-  def mount(%{"id" => room_id}, session, socket) do
+  def mount(%{"id" => room_id}, _session, socket) do
     Logger.info("Mounting room " <> room_id)
-    Logger.info("Session: #{inspect(session)}")
 
     # to track presence, we have to subscribe
-    topic = room_id
     username = MnemonicSlugs.generate_slug()
     if connected?(socket) do
-      CoupGameWeb.Endpoint.subscribe(topic)
-      # self().track(self(), topic, %{
-      #    online_at: inspect(System.system_time(:second)),
-      # })
+      CoupGameWeb.Endpoint.subscribe(room_id)
+      PlayerPresence.track(self(), room_id, username, %{
+          online_at: inspect(System.system_time(:second)),
+      })
     end
 
-    {:ok, assign(socket, room_id: room_id, username: username, user_list: [] )}
+    user_list = PlayerPresence.list(room_id) |> Map.keys()
+    {:ok, assign(socket, room_id: room_id, username: username, user_list: user_list)}
+  end
+
+  @impl true
+  def handle_info(%{event: "presence_diff"}, socket) do
+    user_list = PlayerPresence.list(socket.assigns.room_id) |> Map.keys()
+    socket = assign(socket, user_list: user_list)
+    {:noreply, socket}
   end
 
   @impl true
@@ -31,9 +34,17 @@ defmodule CoupGameWeb.GameRoomLive do
     ~H"""
     <section class="phx-hero">
     <p>Wait for other players to join. There is a need to have 2-5 players</p>
+    <p>Currently we have <%= length(@user_list) %>/5 players.</p>
     <div id="player-list">
     <ul>
-    <li>Me (<%= assigns.username %>)</li>
+    <%= for user <- @user_list do %>
+    <li><%=
+    me_name = @username
+    case user do
+        ^me_name -> user <> " (it's me!)"
+        _ -> user
+      end %></li>
+    <% end %>
     </ul>
     </div>
     <button>Start game</button>

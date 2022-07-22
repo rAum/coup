@@ -15,7 +15,7 @@ defmodule CoupGame.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: CoupGame.PubSub},
       # This implemnets presence, so must be between pubsub/endpoint
-      CoupGameWeb.GameRoomLive,
+      CoupGameWeb.PlayerPresence,
       # Start the Endpoint (http/https)
       CoupGameWeb.Endpoint
       # Start a worker by calling: CoupGame.Worker.start_link(arg)
