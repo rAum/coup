@@ -59,4 +59,146 @@ Enum.split(game_state.court_deck, 3)
 %{game_state | court_deck: Enum.split(game_state.court_deck, 3) |> elem(1)}
 ```
 
+## Elixir exploration
+
+```elixir
+list = [1, 2, 3]
+hd(list)
+```
+
+```elixir
+tl(list)
+```
+
+```elixir
+keyword_list = [foo: "bar", hello: "world"]
+hd(keyword_list)
+keyword_list |> List.keyfind("bar", 1)
+```
+
+```elixir
+keyword_list |> List.keyfind(:foo, 0)
+```
+
+```elixir
+m = %{:foo => 1, "bar alo" => 2}
+m["bar alo"]
+```
+
+```elixir
+# it errors
+{%{m | "nothing" => 12}, m}
+```
+
+```elixir
+# it makes copy
+{%{m | "bar alo" => 12}, m}
+```
+
+```elixir
+{Map.put(m, "aonother foo", "splendid"), m}
+```
+
+```elixir
+m["bar alo"]
+```
+
+```elixir
+IO.puts("hoho #{inspect(m)}")
+```
+
+```elixir
+m |> Map.keys() |> Enum.each(&IO.puts(&1))
+```
+
+```elixir
+case {1, 2, 3} do
+  {1, x, y} when x > 0 and y > 1 ->
+    "Will match"
+
+  _ ->
+    "Won't match"
+end
+```
+
+```elixir
+defmodule Greeter do
+  def hello(%{name: person_name} = person) do
+    IO.puts("Hello, " <> person_name)
+    IO.inspect(person)
+  end
+
+  def bye?() do
+    false
+  end
+end
+
+IO.puts(Greeter.bye?())
+Greeter.hello(%{name: "Maev", skill: "Magic"})
+```
+
+```elixir
+defmodule Example do
+  @greeting "Hello"
+
+  def greeting(name) do
+    ~s(#{@greeting} o big #{name}.)
+  end
+end
+
+Example.greeting("Dog")
+```
+
+```elixir
+opts = [other: "Blabla", greeting: "Hola"]
+IO.puts(Keyword.get(opts, :greeting, "Hi"))
+IO.puts(Keyword.get(opts, :dupa, "Hi"))
+```
+
+```elixir
+defmodule MySigils do
+  def sigil_p(string, []), do: String.upcase(string)
+end
+```
+
+```elixir
+import MySigils
+~p<aloha>
+```
+
 ## Section
+
+```elixir
+for x <- [1, 2], into: %{}, do: {x, 1}
+```
+
+```elixir
+:ets.new(:a_table, [:set, :protected, :named_table])
+```
+
+```elixir
+:ets.insert(:a_table, {"one two", 3})
+```
+
+```elixir
+:ets.lookup(:a_table, "one two")
+```
+
+```elixir
+defmodule TestMatch do
+  def test("What:" <> id), do: IO.puts("OK it matched #{id}")
+  def test(_), do: IO.puts("Second matched")
+end
+
+TestMatch.test("What:13asd2")
+```
+
+```elixir
+IO.puts(length([1, 2, 3]))
+user = "slon"
+
+case user do
+  "slon" -> "Me"
+  _ -> user
+end
+```
