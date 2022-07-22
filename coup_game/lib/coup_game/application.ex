@@ -14,11 +14,15 @@ defmodule CoupGame.Application do
       CoupGameWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: CoupGame.PubSub},
+      # This implemnets presence, so must be between pubsub/endpoint
+      CoupGameWeb.GameRoomLive,
       # Start the Endpoint (http/https)
       CoupGameWeb.Endpoint
       # Start a worker by calling: CoupGame.Worker.start_link(arg)
       # {CoupGame.Worker, arg}
     ]
+
+    :ets.new(:session, [:named_table, :public, read_concurrency: true])
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
