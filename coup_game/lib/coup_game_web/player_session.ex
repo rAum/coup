@@ -1,6 +1,8 @@
 defmodule CoupGameWeb.PlayerSession do
   import Plug.Conn
   require Logger
+  use CoupGameWeb, :controller
+  alias CoupGameWeb.Router.Helpers, as: Helper
 
   @max_age 86400
   @salt "IxdmFm23"
@@ -12,9 +14,18 @@ defmodule CoupGameWeb.PlayerSession do
       |> Plug.Conn.fetch_session()
       |> Plug.Conn.get_session(:user_id)
 
-    CoupGameWeb.Endpoint
+    user = CoupGameWeb.Endpoint
       |> Phoenix.Token.verify(@salt, token, max_age: @max_age)
       |> maybe_load_user()
+
+      if user == nil do
+        Logger.info("AAAAAAAAAAAA wrong")
+        # conn
+        # |> redirect(to: "/")
+        "wrong"
+      else
+        user
+      end
   end
 
   def create(conn) do

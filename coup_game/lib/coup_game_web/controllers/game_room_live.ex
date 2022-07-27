@@ -4,11 +4,19 @@ defmodule CoupGameWeb.GameRoomLive do
   require Logger
 
   @impl true
-  def mount(%{"id" => room_id}, _session, socket) do
+  def mount(%{"id" => room_id}, session, socket) do
     Logger.info("Mounting room " <> room_id)
+    Logger.warn(">>> #{inspect(session)}")
 
-    # to track presence, we have to subscribe
-    username = MnemonicSlugs.generate_slug()
+    # "room_id" => room_id, "user_id" => user_id,
+    username = if %{"user_name" => user_name} = session do
+      user_name
+    else
+      Logger.warn("Bad session")
+      # to track presence, we have to subscribe
+      MnemonicSlugs.generate_slug()
+    end
+
     if connected?(socket) do
       CoupGameWeb.Endpoint.subscribe(room_id)
       PlayerPresence.track(self(), room_id, username, %{

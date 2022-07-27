@@ -4,14 +4,21 @@ defmodule CoupGameWeb.LobbyLive do
 
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{} )}
+  def mount(_params, session, socket) do
+    Logger.warn(session)
+
+    username = case session do
+      %{username: name} -> name
+      _ -> MnemonicSlugs.generate_slug()
+    end
+    Logger.info(username)
+    {:ok, assign(socket, query: "", results: %{})}
   end
 
   @impl true
   def handle_event("gen-random-room", _params, socket) do
-    slug = "/room/" <> MnemonicSlugs.generate_slug(4)
-    Logger.info(slug)
+    slug = "/room/join/" <> MnemonicSlugs.generate_slug(4)
+    Logger.info("Connecting to #{slug}")
     {:noreply, push_redirect(socket, to: slug)}
   end
 
