@@ -10,29 +10,18 @@ defmodule CoupGameWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :game_room do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {CoupGameWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug CoupGameWeb.PlayerSession
-  end
-
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/", CoupGameWeb do
-    pipe_through :browser
+    pipe_through [:browser, CoupGameWeb.Plugs.InitSession]
 
     live "/", LobbyLive, :index
-    #live "/room/:id", GameRoomLive, :index
   end
 
   scope "/room", CoupGameWeb do
-    pipe_through :game_room
+    pipe_through [:browser, CoupGameWeb.EnsureSession]
     get "/join/:room_id", Lobby, :join
     live "/:id", GameRoomLive, :index
   end

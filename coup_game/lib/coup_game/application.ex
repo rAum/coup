@@ -17,12 +17,14 @@ defmodule CoupGame.Application do
       # This implemnets presence, so must be between pubsub/endpoint
       CoupGameWeb.PlayerPresence,
       # Start the Endpoint (http/https)
-      CoupGameWeb.Endpoint
+      CoupGameWeb.Endpoint,
+      # Start supervisor for games
+      CoupGame.Game.App,
       # Start a worker by calling: CoupGame.Worker.start_link(arg)
       # {CoupGame.Worker, arg}
     ]
 
-    :ets.new(:session, [:named_table, :public, read_concurrency: true])
+    #:ets.new(:session, [:named_table, :public, read_concurrency: true])
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

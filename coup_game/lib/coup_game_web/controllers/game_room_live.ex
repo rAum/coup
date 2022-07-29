@@ -5,17 +5,12 @@ defmodule CoupGameWeb.GameRoomLive do
 
   @impl true
   def mount(%{"id" => room_id}, session, socket) do
-    Logger.info("Mounting room " <> room_id)
+    Logger.info("Mounting #{__MODULE__} " <> room_id)
     Logger.warn(">>> #{inspect(session)}")
 
     # "room_id" => room_id, "user_id" => user_id,
-    username = if %{"user_name" => user_name} = session do
-      user_name
-    else
-      Logger.warn("Bad session")
-      # to track presence, we have to subscribe
-      MnemonicSlugs.generate_slug()
-    end
+    # assert this is set
+    %{"user_name" => username} = session
 
     if connected?(socket) do
       CoupGameWeb.Endpoint.subscribe(room_id)
@@ -38,8 +33,8 @@ defmodule CoupGameWeb.GameRoomLive do
   @impl true
   def render(assigns) do
     Logger.info("#{assigns.username} ---- #{inspect(assigns)}")
-    # <h1><%= gettext "Welcome to %{assigns.room}!", name: "Coup Game" %></h1>
     ~H"""
+    <h1><%= gettext "Game room:" %> <b><%= @room_id %></b></h1>
     <section class="phx-hero">
     <p>Wait for other players to join. There is a need to have 2-5 players</p>
     <p>Currently we have <%= length(@user_list) %>/5 players.</p>
