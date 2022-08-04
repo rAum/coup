@@ -1,9 +1,8 @@
 defmodule CoupGame.Game.App do
   use Supervisor
-  alias CoupGame.Game.{Rooms, RoomsCleaner}
+  alias CoupGame.Game.{Rooms, RoomsCleaner, PlayerNames}
 
   @registry :game_rooms
-  @player_names :player_names
 
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
@@ -13,7 +12,7 @@ defmodule CoupGame.Game.App do
   def init([]) do
     children = [
       {Registry, [keys: :unique, name: @registry]},
-      {Registry, [keys: :unique, name: @player_names]},
+      PlayerNames,
       Rooms,
       #RoomsCleaner,
     ]

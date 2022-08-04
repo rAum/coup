@@ -1,6 +1,6 @@
 defmodule CoupGameWeb.LobbyLive do
   use CoupGameWeb, :live_view
-  alias CoupGame.Game.{Rooms, Room}
+  alias CoupGame.Game.{Rooms, Room, PlayerNames}
   require Logger
 
 
@@ -9,18 +9,17 @@ defmodule CoupGameWeb.LobbyLive do
     Logger.info("Mounting LobbyLive")
     Logger.warn(session)
 
-    user_name = session
-      |> Enum.find(nil, fn {a, _} -> a == "user_name" end)
-      |> case do
-        nil -> nil
-        a -> a |> elem(1)
-      end
+    user_id = session["user_id"]
 
-    if user_name == nil do
-      {:error, socket}
-    else
-      {:ok, assign(socket, user_name: user_name)}
+    user_name = case PlayerNames.lookup(user_id) do
+      [{_, user_name}] -> user_name
+      _ ->
+        slug = MnemonicSlugs.generate_slug()
+        PlayerNames.add_update(user_id, slug)
+        slug
     end
+
+    {:ok, assign(socket, user_name: user_name, user_id: user_id)}
   end
 
   @impl true
@@ -29,7 +28,11 @@ defmodule CoupGameWeb.LobbyLive do
     new_name = String.trim(change["username"])
     socket =  case byte_size(new_name) do
       0 -> socket
-      new_name -> assign(socket, user_name: new_name)
+      _ ->
+        assign(socket, user_name: new_name)
+        Logger.info("Changing name #{new_name}")
+        PlayerNames.add_update(socket.assigns.user_id, new_name)
+        socket
     end
     {:noreply, socket}
   end
@@ -38,12 +41,10 @@ defmodule CoupGameWeb.LobbyLive do
   def handle_event("gen-random-room", _params, socket) do
     slug = "/room/join/" <> MnemonicSlugs.generate_slug(4)
     {:ok, room_pid} = Rooms.start_child(slug)
-    user_name = socket.assigns.user_name
-    Logger.info("Username when generating room[#{slug}]: #{user_name}")
+    user_id = socket.assigns.user_id
+    Logger.info("Username when generating room[#{slug}]: user_id=#{user_id}")
 
-    if user_name != nil do
-      Room.add_player(room_pid, user_name)
-    end
+    Room.add_player(room_pid, user_id)
 
     Logger.info("Redirecting >>>> #{slug}")
     {:noreply, redirect(socket, to: slug)}
