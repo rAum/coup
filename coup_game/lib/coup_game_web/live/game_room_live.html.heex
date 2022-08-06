@@ -1,0 +1,24 @@
+<h1><%= gettext "Game room:" %> <b><%= @room_id %></b></h1>
+<section class="phx-hero">
+<p>Secret code: <input type="text" value={@room_id} readonly></p>
+<p>Wait for other players to join. Game requires 2-5 players.</p>
+
+<p>Currently we have <%= length(@user_list) %>/5 players.</p>
+<div id="player-list">
+<ul>
+<%= for user <- @user_list do %>
+<li><%=
+me_name = @username
+case user do
+    ^me_name -> user <> " (it's me!)"
+    _ -> user
+  end %></li>
+<% end %>
+</ul>
+</div>
+<%=
+  user_count = @user_list |> length
+  if user_count >= 2 and user_count <= 5 do%>
+<button>Start game</button>
+<% end %>
+</section>

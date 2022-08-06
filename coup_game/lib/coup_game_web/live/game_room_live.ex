@@ -37,31 +37,4 @@ defmodule CoupGameWeb.GameRoomLive do
     {:noreply, socket}
   end
 
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <h1><%= gettext "Game room:" %> <b><%= @room_id %></b></h1>
-    <section class="phx-hero">
-    <p>Wait for other players to join. There is a need to have 2-5 players</p>
-    <p>Currently we have <%= length(@user_list) %>/5 players.</p>
-    <div id="player-list">
-    <ul>
-    <%= for user <- @user_list do %>
-    <li><%=
-    me_name = @username
-    case user do
-        ^me_name -> user <> " (it's me!)"
-        _ -> user
-      end %></li>
-    <% end %>
-    </ul>
-    </div>
-    <%=
-      user_count = @user_list |> length
-      if user_count >= 2 and user_count <= 5 do%>
-    <button>Start game</button>
-    <% end %>
-    </section>
-    """
-  end
 end

@@ -47,26 +47,4 @@ defmodule CoupGameWeb.LobbyLive do
   def handle_event("enter-room", _params, socket) do
     {:noreply, socket}
   end
-
-  @impl true
-  def render(assigns) do
-     #
-    ~H"""
-    <section class="phx-hero">
-    <h1><%= gettext "Welcome to %{name}!", name: "Coup Game" %></h1>
-    <p><%= gettext "Card game implmented for the sake of learning new programming language and frameworks;)" %></p>
-    <form phx-change="user-settings-change">
-    <label for="username">Type your user name:</label><input type="text" id="username" name="username" value={@user_name}>
-    <button phx-click="gen-random-room">Create new room</button>
-    </form>
-    <hr>
-    <h2>Know secret code for existing game room?</h2>
-    <form phx-submit="enter-room">
-    <label for="secret">Secret code:</label>
-    <input type="text" id="secret" name="secret">
-    <button>Enter!</button>
-    </form>
-    </section>
-    """
-  end
 end
