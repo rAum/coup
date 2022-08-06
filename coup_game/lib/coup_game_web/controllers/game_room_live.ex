@@ -1,37 +1,46 @@
 defmodule CoupGameWeb.GameRoomLive do
   use CoupGameWeb, :live_view
   alias CoupGameWeb.PlayerPresence
+  alias CoupGame.Game.PlayerNames
   require Logger
 
   @impl true
-  def mount(%{"id" => room_id}, _session, socket) do
-    Logger.info("Mounting room " <> room_id)
+  def mount(%{"id" => room_id}, session, socket) do
+    %{"user_id" => user_id} = session
 
-    # to track presence, we have to subscribe
-    username = MnemonicSlugs.generate_slug()
+    user_name = lookup_player_name(user_id)
+    Logger.info("Mounting #{__MODULE__} #{room_id} for #{user_name}")
+
     if connected?(socket) do
       CoupGameWeb.Endpoint.subscribe(room_id)
-      PlayerPresence.track(self(), room_id, username, %{
+      PlayerPresence.track(self(), room_id, user_id, %{
           online_at: inspect(System.system_time(:second)),
       })
     end
 
     user_list = PlayerPresence.list(room_id) |> Map.keys()
-    {:ok, assign(socket, room_id: room_id, username: username, user_list: user_list)}
+    {:ok, assign(socket, room_id: room_id, user_id: user_id, username: user_name, user_list: user_list)}
+  end
+
+  defp lookup_player_name(user_id) do
+    [{_, name}] = PlayerNames.lookup(user_id)
+    name
   end
 
   @impl true
   def handle_info(%{event: "presence_diff"}, socket) do
-    user_list = PlayerPresence.list(socket.assigns.room_id) |> Map.keys()
+    user_list = PlayerPresence.list(socket.assigns.room_id)
+    |> Map.keys()
+    |> Enum.map(&lookup_player_name/1)
+
     socket = assign(socket, user_list: user_list)
     {:noreply, socket}
   end
 
   @impl true
   def render(assigns) do
-    Logger.info("#{assigns.username} ---- #{inspect(assigns)}")
-    # <h1><%= gettext "Welcome to %{assigns.room}!", name: "Coup Game" %></h1>
     ~H"""
+    <h1><%= gettext "Game room:" %> <b><%= @room_id %></b></h1>
     <section class="phx-hero">
     <p>Wait for other players to join. There is a need to have 2-5 players</p>
     <p>Currently we have <%= length(@user_list) %>/5 players.</p>
