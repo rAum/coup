@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark h-full">
   <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -9,19 +9,42 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body>
+  <body class="pt-24 flex flex-col h-full dark:bg-slate-600">
     <header>
-      <section class="container">
-        <h1>Coup Game</h1>
-        <nav>
-          <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          </ul>
-        </nav>
-      </section>
+      <nav class="fixed top-0 left-0 right-0 z-30  bg-gray-700 shadow-lg p-2 text-gray-300">
+        <div class="container">
+          <h1 class="pr-10">Coup Game</h1>
+        </div>
+          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+          <div class="container flex items-center text-sm hover:text-blue-400">
+          <%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
+          </div>
+        <% end %>
+      </nav>
     </header>
+
+    <div class="container p-3">
     <%= @inner_content %>
+    </div>
+
+    <div>
+      🪙: 2
+    </div>
+    <div class="flex min-h-max w-full">
+      <div class="flex min-h-max">
+        <CoupGameWeb.Components.Card.card card="duke" card_name="Duke" card_desc="Alo" />
+        <CoupGameWeb.Components.Card.card card="assasin" card_name="Assasin" card_desc="Alo" />
+        <CoupGameWeb.Components.Card.card card="captain" card_name="Captain" card_desc="Alo" />
+        <CoupGameWeb.Components.Card.card card="contessa" card_name="Contessa" card_desc="Alo" />
+        <CoupGameWeb.Components.Card.card card="ambassador" card_name="Ambassador" card_desc="Alo" />
+        </div> 
+    </div>
+    
+    <footer class="bg-gray-700 shadow-md mt-auto py-3">
+      <div class="container pb-4 max-w-4xl mx-auto text-center text-gray-300 text-sm">
+       2022 - <%= DateTime.utc_now.year %> &copy; CoupGame
+      </div>
+      
+    </footer>
   </body>
 </html>
