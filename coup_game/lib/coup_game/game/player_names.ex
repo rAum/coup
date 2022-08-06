@@ -18,7 +18,6 @@ defmodule CoupGame.Game.PlayerNames do
   @impl true
   def handle_call(id, _from, state) do
     result = :ets.lookup(@kv_name, id)
-    Logger.info("Lookup done for #{id}")
     {:reply, result, state}
   end
 

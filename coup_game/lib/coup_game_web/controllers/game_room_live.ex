@@ -6,14 +6,10 @@ defmodule CoupGameWeb.GameRoomLive do
 
   @impl true
   def mount(%{"id" => room_id}, session, socket) do
-    Logger.info("Mounting #{__MODULE__} " <> room_id)
-    Logger.warn(">>> #{inspect(session)}")
-
-    # "room_id" => room_id, "user_id" => user_id,
-    # assert this is set
     %{"user_id" => user_id} = session
 
     user_name = lookup_player_name(user_id)
+    Logger.info("Mounting #{__MODULE__} #{room_id} for #{user_name}")
 
     if connected?(socket) do
       CoupGameWeb.Endpoint.subscribe(room_id)
@@ -43,7 +39,6 @@ defmodule CoupGameWeb.GameRoomLive do
 
   @impl true
   def render(assigns) do
-    Logger.info("#{assigns.username} ---- #{inspect(assigns)}")
     ~H"""
     <h1><%= gettext "Game room:" %> <b><%= @room_id %></b></h1>
     <section class="phx-hero">

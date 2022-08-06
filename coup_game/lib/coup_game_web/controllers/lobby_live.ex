@@ -7,8 +7,6 @@ defmodule CoupGameWeb.LobbyLive do
   @impl true
   def mount(_params, session, socket) do
     Logger.info("Mounting LobbyLive")
-    Logger.warn(session)
-
     user_id = session["user_id"]
 
     user_name = case PlayerNames.lookup(user_id) do
@@ -24,7 +22,6 @@ defmodule CoupGameWeb.LobbyLive do
 
   @impl true
   def handle_event("user-settings-change", change, socket) do
-    Logger.info(">> #{inspect(change)}")
     new_name = String.trim(change["username"])
     socket =  case byte_size(new_name) do
       0 -> socket
@@ -42,11 +39,7 @@ defmodule CoupGameWeb.LobbyLive do
     slug = "/room/join/" <> MnemonicSlugs.generate_slug(4)
     {:ok, room_pid} = Rooms.start_child(slug)
     user_id = socket.assigns.user_id
-    Logger.info("Username when generating room[#{slug}]: user_id=#{user_id}")
-
     Room.add_player(room_pid, user_id)
-
-    Logger.info("Redirecting >>>> #{slug}")
     {:noreply, redirect(socket, to: slug)}
   end
 
