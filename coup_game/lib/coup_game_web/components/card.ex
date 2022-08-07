@@ -14,11 +14,12 @@ defmodule CoupGameWeb.Components.Card do
             <%= @card_name %>
           </div>
           <div class="text-left space-y-4">
-          <blockquote>
+          <!-- <blockquote>
             <p class="text-lg font-medium">
             <%= @card_desc %>
             </p>
           </blockquote>
+          -->
         </div>
         </figcaption>
       </div>

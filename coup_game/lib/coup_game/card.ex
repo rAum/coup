@@ -10,12 +10,14 @@ defmodule CoupGame.Card do
     type: atom(),
     uuid: integer(),
     title: String.t(),
-    description: String.t()
+    description: String.t(),
+    file: String.t()
   }
 
   defstruct type: :blank,
             uuid: 0,
             title: "Unknown",
-            description: "Unknown card"
+            description: "Unknown card",
+            file: ""
 
 end

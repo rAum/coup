@@ -20,26 +20,13 @@
           <%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
           </div>
         <% end %>
-      </nav>
+      </nav> 
     </header>
 
     <div class="container p-3">
     <%= @inner_content %>
     </div>
 
-    <div>
-      🪙: 2
-    </div>
-    <div class="flex min-h-max w-full">
-      <div class="flex min-h-max">
-        <CoupGameWeb.Components.Card.card card="duke" card_name="Duke" card_desc="Alo" />
-        <CoupGameWeb.Components.Card.card card="assasin" card_name="Assasin" card_desc="Alo" />
-        <CoupGameWeb.Components.Card.card card="captain" card_name="Captain" card_desc="Alo" />
-        <CoupGameWeb.Components.Card.card card="contessa" card_name="Contessa" card_desc="Alo" />
-        <CoupGameWeb.Components.Card.card card="ambassador" card_name="Ambassador" card_desc="Alo" />
-        </div> 
-    </div>
-    
     <footer class="bg-gray-700 shadow-md mt-auto py-3">
       <div class="container pb-4 max-w-4xl mx-auto text-center text-gray-300 text-sm">
        2022 - <%= DateTime.utc_now.year %> &copy; CoupGame

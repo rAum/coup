@@ -1,6 +1,6 @@
 defmodule CoupGameWeb.LobbyLive do
   use CoupGameWeb, :live_view
-  alias CoupGame.Game.{Rooms, Room, PlayerNames}
+  alias CoupGame.Game.PlayerNames
   require Logger
 
 
@@ -37,9 +37,6 @@ defmodule CoupGameWeb.LobbyLive do
   @impl true
   def handle_event("gen-random-room", _params, socket) do
     slug = "/room/join/" <> MnemonicSlugs.generate_slug(4)
-    {:ok, room_pid} = Rooms.start_child(slug)
-    user_id = socket.assigns.user_id
-    Room.add_player(room_pid, user_id)
     {:noreply, redirect(socket, to: slug)}
   end
 

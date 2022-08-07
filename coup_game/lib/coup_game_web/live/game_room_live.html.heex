@@ -1,24 +1,52 @@
-<h1><%= gettext "Game room:" %> <b><%= @room_id %></b></h1>
 <section class="phx-hero">
-<p>Secret code: <input type="text" value={@room_id} readonly></p>
-<p>Wait for other players to join. Game requires 2-5 players.</p>
-
-<p>Currently we have <%= length(@user_list) %>/5 players.</p>
-<div id="player-list">
-<ul>
-<%= for user <- @user_list do %>
-<li><%=
-me_name = @username
-case user do
-    ^me_name -> user <> " (it's me!)"
-    _ -> user
-  end %></li>
-<% end %>
-</ul>
-</div>
+<%= if not @game_on do %>
+<h1><%= gettext "Game room (secret code):" %> <b><%= @room_id %></b></h1>
+<!-- <p>Secret code: <input type="text" value={@room_id} readonly></p> -->
+<p>Waiting for other players to join. Game requires 2-5 players.</p>
+<p>Currently we have <strong><%= length(@user_list) %> / 5</strong> player(s)</p>
+<PlayerList.render {assigns}/>
+<p>
+  <strong>Game rules:</strong>
+  Each player has two cards - they represents their people in court. Each type of person has it's own skills.
+  The goal is to eliminate other players people and be the last standing - there is only one winner and rest lose.
+  All cards are kept secret.
+  You can execute any action you want, even for the card you do not own - but other players can challenge you. If you're caught - you lose card/influence.
+  When you lose a card - you can always pick which one.
+</p>
 <%=
   user_count = @user_list |> length
   if user_count >= 2 and user_count <= 5 do%>
-<button>Start game</button>
+  <button class="btn btn-blue" phx-click="game_start">Start game</button>
+  <% end %>
+<% else %>
+<div class="flex flex-col">
+  <.players_state {assigns} />
+  <div id="court">
+    <h2>Court</h2>
+  </div>
+  <div id="my-hand">
+    <div class="flex min-h-max w-full">
+      <div class="flex min-h-max max-w-prose">
+        <%=
+        cards = @hand |> Enum.map(&CoupGame.Carddeck.generate_card/1)
+        for card <- cards do %>
+        <CoupGameWeb.Components.Card.card card={card.file} card_name={card.title} card_desc={card.description} />
+        <% end %>
+        </div> 
+    </div>
+    <div class="container flex flex-col">
+      <.actions {assigns} />
+    </div>
+  </div>
+
+  <!--
+  <CoupGameWeb.Components.Card.card card="duke" card_name="Duke" card_desc="Alo" />
+  <CoupGameWeb.Components.Card.card card="assasin" card_name="Assasin" card_desc="Alo" />
+  <CoupGameWeb.Components.Card.card card="captain" card_name="Captain" card_desc="Alo" />
+  <CoupGameWeb.Components.Card.card card="contessa" card_name="Contessa" card_desc="Alo" />
+  <CoupGameWeb.Components.Card.card card="ambassador" card_name="Ambassador" card_desc="Alo" />
+  -->
+
+</div>
 <% end %>
 </section>
