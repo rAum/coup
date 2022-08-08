@@ -1,0 +1,49 @@
+# GenServers Experiments
+
+## Section
+
+```elixir
+defmodule Foo do
+  use GenServer
+  require Logger
+
+  def start_link do
+    GenServer.start_link(__MODULE__, [])
+  end
+
+  @impl true
+  def init(init_arg) do
+    {:ok, init_arg}
+  end
+
+  def foo(pid) do
+    GenServer.cast(pid, :buu)
+  end
+
+  @impl true
+  def handle_cast(:buu, status) do
+    IO.puts("AAAAA")
+    {:noreply, status}
+  end
+
+  @impl true
+  def handle_info(:buu, status) do
+    Logger.info("buu")
+    {:noreply, status}
+  end
+
+  def handle_info({:EXIT, from, reason}, status) do
+    Logger.info("Quitting because of #{from} as #{reason}")
+    {:noreply, status}
+  end
+end
+
+{:ok, pid} = Foo.start_link()
+Foo.foo(pid)
+```
+
+```elixir
+Process.send(pid, :buu, [])
+Process.exit(pid, :normal)
+IO.puts(Process.alive?(pid))
+```

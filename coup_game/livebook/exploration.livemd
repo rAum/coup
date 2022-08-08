@@ -1,9 +1,5 @@
 # Exploration livebook
 
-```elixir
-
-```
-
 ## Card deck
 
 Change livebook settings to connect to mix coup_game project first.
@@ -87,7 +83,7 @@ m["bar alo"]
 
 ```elixir
 # it errors
-{%{m | "nothing" => 12}, m}
+{%{m | :foo => 12, "bar alo" => 10}, m}
 ```
 
 ```elixir
@@ -201,4 +197,40 @@ case user do
   "slon" -> "Me"
   _ -> user
 end
+```
+
+```elixir
+n = 4
+Enum.into(Enum.zip([5..7, 1..n]), %{})
+
+m =
+  Enum.zip([1..n, Stream.repeatedly(fn -> 5 end)])
+  |> Enum.into(%{})
+
+# m = %{players: [1, 2]}
+
+# m = %{m | deck: 'slon'}
+```
+
+```elixir
+if Map.has_key?(m, 1) do
+  1
+else
+  2
+end
+```
+
+```elixir
+[card_captain: 0, card_captain: 1] |> Enum.map(&CoupGame.Carddeck.generate_card/1)
+```
+
+```elixir
+x = ["aaa", "bbb", "cc"]
+x |> Enum.shuffle() |> Enum.with_index() |> Enum.into(%{}, &{elem(&1, 1), elem(&1, 0)})
+```
+
+```elixir
+state = %{turn: 0, foo: 2, coins: [1, 2]}
+{public_state, _} = Map.split(state, [:turn, :turn_order, :coins])
+public_state
 ```
