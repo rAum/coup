@@ -25,6 +25,7 @@
     <h2>Court</h2>
   </div>
   <div id="my-hand">
+    <p>Cards on my hand:</p>
     <div class="flex min-h-max w-full">
       <div class="flex min-h-max max-w-prose">
         <%=
@@ -34,19 +35,18 @@
         <% end %>
         </div> 
     </div>
+    <%= if @public_state.turn == @public_state.turn_order[@user_id] do %>
+    <p class="text-lg text-sky-600 p-1">Your turn! Pick an action:</p>
+    <% else %>
+    <p class="text-lg text-red-300 p-1">Not your turn yet.</p>
+    <% end %>
     <div class="container flex flex-col">
       <.actions {assigns} />
     </div>
+    <%= if @coup do %>
+    <.live_component module={CoupGameWeb.Live.CoupActionLive} id="coup_modal" coins={@public_state.coins[@user_id]} user_id={@user_id} players={@public_state.turn_order}/>
+    <% end %>
   </div>
-
-  <!--
-  <CoupGameWeb.Components.Card.card card="duke" card_name="Duke" card_desc="Alo" />
-  <CoupGameWeb.Components.Card.card card="assasin" card_name="Assasin" card_desc="Alo" />
-  <CoupGameWeb.Components.Card.card card="captain" card_name="Captain" card_desc="Alo" />
-  <CoupGameWeb.Components.Card.card card="contessa" card_name="Contessa" card_desc="Alo" />
-  <CoupGameWeb.Components.Card.card card="ambassador" card_name="Ambassador" card_desc="Alo" />
-  -->
-
 </div>
 <% end %>
 </section>

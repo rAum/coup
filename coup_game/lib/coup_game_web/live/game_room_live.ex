@@ -35,7 +35,9 @@ defmodule CoupGameWeb.GameRoomLive do
       room_pid: room_pid,
       game_on: room_pid != nil,
       hand: hand,
-      public_state: public_state
+      public_state: public_state,
+      coup: false,
+      turn: 0,
     }
 
     Logger.info("Mounting with state: #{inspect(init_state)}")
@@ -77,15 +79,40 @@ defmodule CoupGameWeb.GameRoomLive do
     Logger.info("Triggered action #{inspect(type)}")
     public_state = Room.get_public_state(socket.assigns.room_id)
     socket = if public_state.turn == public_state.turn_order[socket.assigns.user_id] do
-      Room.take_action(socket.assigns.room_id, socket.assigns.user_id, type)
-      CoupGameWeb.Endpoint.broadcast(socket.assigns.room_id, "game_update", %{})
-      socket
+      handle_action(type, socket)
     else
       socket
       |> put_flash(:error, "It's not your turn!")
     end
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("cancel_coup", _, socket) do
+    {:noreply, assign(socket, coup: false)}
+  end
+
+  @impl true
+  def handle_event("coup_exe", %{"id" => target}, socket) do
+    Logger.info("COUP >>> #{target}")
+    {:noreply, assign(socket, coup: false)}
+  end
+
+  defp handle_action("coup", socket) do
+    if socket.assigns.public_state.coins[socket.assigns.user_id] < 3 do
+      socket |> put_flash(:error, "Not enough coins to start a coup!")
+    else
+      socket = assign(socket, coup: true)
+      Logger.info("Coup in progress")
+      socket
+    end
+  end
+
+  defp handle_action(type, socket) do
+    Room.take_action(socket.assigns.room_id, socket.assigns.user_id, type)
+    CoupGameWeb.Endpoint.broadcast(socket.assigns.room_id, "game_update", %{})
+    socket
   end
 
   @impl true

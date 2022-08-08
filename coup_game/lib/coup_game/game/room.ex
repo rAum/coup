@@ -118,6 +118,7 @@ defmodule CoupGame.Game.Room do
     initial_state = %{
       players: [],
       room_id: opts,
+      game_stack: [],
     }
     {:ok, initial_state}
   end
