@@ -37,7 +37,6 @@ defmodule CoupGameWeb.GameRoomLive do
       hand: hand,
       public_state: public_state,
       coup: false,
-      turn: 0,
     }
 
     Logger.info("Mounting with state: #{inspect(init_state)}")
@@ -129,17 +128,21 @@ defmodule CoupGameWeb.GameRoomLive do
     Logger.info(">>> START GAME <<<")
     socket = assign(socket, game_on: true, room_pid: pid)
     Room.start_game(pid)
+    socket = sync_socket_with_state(socket)
     {:noreply, socket}
   end
 
   @impl true
   def handle_info(%{event: "game_update", payload: _payload}, socket) do
     Logger.info("~~~ game update ~~~")
+    socket = sync_socket_with_state(socket)
+    {:noreply, socket}
+  end
+
+  defp sync_socket_with_state(socket) do
     hand = Room.get_player_hand(socket.assigns.room_pid, socket.assigns.user_id)
     public = Room.get_public_state(socket.assigns.room_id)
-    Logger.info("hand #{inspect(hand)}")
-    socket = assign(socket, hand: hand, public_state: public)
-    {:noreply, socket}
+    assign(socket, hand: hand, public_state: public)
   end
 
   #==================

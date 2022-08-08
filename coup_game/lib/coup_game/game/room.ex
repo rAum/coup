@@ -89,7 +89,11 @@ defmodule CoupGame.Game.Room do
     player_hands = Enum.zip([state.players, player_decks])
     |> Enum.into(%{})
 
-    turn_order = state.players |> Enum.shuffle() |> Enum.with_index() |> Enum.into(%{})
+    turn_order = state.players
+                |> Enum.shuffle()
+                |> Enum.with_index()
+                |> Enum.into(%{})
+
     new_state = %{
       court: court_deck,
       hands: player_hands,
@@ -98,7 +102,7 @@ defmodule CoupGame.Game.Room do
       turn_order: turn_order,
     }
     state = Map.merge(state, new_state)
-    Logger.info("Game is ON! #{inspect(state)}")
+    Logger.info("Game is ON!")
 
     CoupGameWeb.Endpoint.broadcast(state.room_id, "game_update", nil)
     {:noreply, state}
