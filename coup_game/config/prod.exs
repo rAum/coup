@@ -14,6 +14,40 @@ config :coup_game, CoupGameWeb.Endpoint, cache_static_manifest: "priv/static/cac
 # Do not print debug messages in production
 config :logger, level: :info
 
+
+# fly.io: Select configuration: Development - Single node, 1x shared CPU, 256MB RAM, 1GB disk
+# Creating postgres cluster coup-pg in organization personal
+# Postgres cluster coup-pg created
+#   Username:    postgres
+#   Password:    8cd21406a94bab8bc5767260860b8d97fe2cf0e8a8fd1acf
+#   Hostname:    coup-pg.internal
+#   Proxy Port:  5432
+#   PG Port: 5433
+# Save your credentials in a secure place, you won't be able to see them again!
+
+# Monitoring Deployment
+
+# 1 desired, 1 placed, 1 healthy, 0 unhealthy [health checks: 3 total, 3 passing]
+# --> v0 deployed successfully
+
+# Connect to postgres
+# Any app within the personal organization can connect to postgres using the above credentials and the hostname "coup-pg.internal."
+# For example: postgres://postgres:8cd21406a94bab8bc5767260860b8d97fe2cf0e8a8fd1acf@coup-pg.internal:5432
+
+# Now you've setup postgres, here's what you need to understand: https://fly.io/docs/reference/postgres-whats-next/
+
+
+# Configure your database
+config :coup_game, CoupGame.Repo,
+  username: "postgres",
+  password: "8cd21406a94bab8bc5767260860b8d97fe2cf0e8a8fd1acf",
+  hostname: "coup-pg.internal",
+  database: "coup_game",
+  port: 5432,
+  stacktrace: false,
+  show_sensitive_data_on_connection_error: false,
+  pool_size: 10
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
