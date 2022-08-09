@@ -20,7 +20,19 @@ defmodule CoupGame.Game.State do
             priv_state: %{},
             game_stack: []]
 
-  def new(players) do
+  @spec new(list) :: :error | %__MODULE__{}
+  def new([]), do: :error
+  def new([_]), do: :error
+  def new(players) when is_list(players) do
+    if length(players) <= 7 do
+      create_new(players)
+    else
+      :error
+    end
+  end
+  def new(_), do: :error
+
+  defp create_new(players) do
     n = Enum.count(players)
     {court_deck, player_decks} = CoupGame.Carddeck.deal_deck(n)
     player_hands = Enum.zip([players, player_decks])
