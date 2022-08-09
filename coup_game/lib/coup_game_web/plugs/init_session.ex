@@ -2,7 +2,6 @@ defmodule CoupGameWeb.Plugs.InitSession do
   import Plug.Conn
   require Logger
   use CoupGameWeb, :controller
-  alias CoupGameWeb.Router.Helpers, as: Helper
 
   @max_age 86400
   @salt "IxdmFm23"
@@ -27,10 +26,7 @@ defmodule CoupGameWeb.Plugs.InitSession do
   end
 
   defp maybe_load_user({:ok, user_id}), do: user_id
-  defp maybe_load_user({:error, err}) do
-    Logger.error(err)
-    nil
-  end
+  defp maybe_load_user({:error, _}), do: nil
 
   def call(conn, _opts) do
     user_id = fetch(conn)
