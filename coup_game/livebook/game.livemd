@@ -1,0 +1,117 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Untitled notebook
+
+## Section
+
+```elixir
+alias CoupGame.Game.Action
+alias CoupGame.Game.State
+
+c = Action.make_coup("foo", "bar")
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%CoupGame.Game.Action{origin: "foo", target: "bar", type: :coup}
+```
+
+```elixir
+require CoupGame.Game.State
+CoupGame.Game.State
+state = State.new(["a", "b", "c"])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%CoupGame.Game.State{
+  game_stack: [],
+  player_view: %{},
+  players: ["a", "b", "c"],
+  priv_state: %{
+    court: [
+      card_assasin: 6,
+      card_duke: 7,
+      card_contessa: 8,
+      card_assasin: 9,
+      card_captain: 10,
+      card_ambassador: 11,
+      card_captain: 12,
+      card_captain: 13,
+      card_assasin: 14
+    ],
+    hands: %{
+      "a" => [card_contessa: 0, card_ambassador: 1],
+      "b" => [card_duke: 2, card_contessa: 3],
+      "c" => [card_ambassador: 4, card_duke: 5]
+    }
+  },
+  public_state: %{
+    coins: %{"a" => 2, "b" => 2, "c" => 2},
+    turn: 0,
+    turn_order: %{"a" => 1, "b" => 2, "c" => 0}
+  }
+}
+```
+
+```elixir
+defmodule Dev do
+  def is_turn?(player_id, %State{:public_state => %{:turn_order => turn_order, :turn => turn}}) do
+    turn_order[player_id] == turn
+  end
+
+  def next_turn(%State{} = state) do
+    n = state.players |> Enum.count()
+    new_public = %{state.public_state | turn: rem(state.public_state.turn + 1, n)}
+    %{state | public_state: new_public}
+  end
+end
+
+Dev.is_turn?("a", state)
+Dev.is_turn?("c", state)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+true
+```
+
+```elixir
+Dev.next_turn(state) |> Dev.next_turn()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%CoupGame.Game.State{
+  game_stack: [],
+  player_view: %{},
+  players: ["a", "b", "c"],
+  priv_state: %{
+    court: [
+      card_assasin: 6,
+      card_duke: 7,
+      card_contessa: 8,
+      card_assasin: 9,
+      card_captain: 10,
+      card_ambassador: 11,
+      card_captain: 12,
+      card_captain: 13,
+      card_assasin: 14
+    ],
+    hands: %{
+      "a" => [card_contessa: 0, card_ambassador: 1],
+      "b" => [card_duke: 2, card_contessa: 3],
+      "c" => [card_ambassador: 4, card_duke: 5]
+    }
+  },
+  public_state: %{
+    coins: %{"a" => 2, "b" => 2, "c" => 2},
+    turn: 2,
+    turn_order: %{"a" => 1, "b" => 2, "c" => 0}
+  }
+}
+```
