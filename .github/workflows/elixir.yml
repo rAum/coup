@@ -18,6 +18,17 @@ jobs:
       run:
         working-directory: ./coup_game
 
+    services:
+      postgres:
+        image: postgres:12.6
+        env:
+          POSTGRES_USER: coup_game_app_user
+          POSTGRES_PASSWORD: kurczakiMALE2
+          POSTGRES_DB: coup_game
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Elixir
@@ -33,5 +44,9 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
+    - name: Setup DB
+      run: mix ecto.setup
     - name: Run tests
       run: mix test
+    - name: Run credo
+      run: mix credo
