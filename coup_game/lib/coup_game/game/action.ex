@@ -10,11 +10,14 @@ defmodule CoupGame.Game.Action do
     type: atom(),
     origin: String.t(),
     target: String.t(),
+    payload: any,
   }
 
-  defstruct type: :nop,
+  defstruct [:payload,
+            type: :nop,
             origin: "",
-            target: ""
+            target: ""]
+
 
 
   def make_coup(origin, target) do
