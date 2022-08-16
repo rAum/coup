@@ -48,5 +48,6 @@ jobs:
       run: mix ecto.setup
     - name: Run tests
       run: mix test
-    - name: Run credo
-      run: mix credo
+    - name: Run credo - check for warnings and errors
+      run: |
+        mix credo || test $? -le 12

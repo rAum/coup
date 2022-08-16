@@ -59,7 +59,7 @@ defmodule CoupGameWeb.GameRoomLive do
         {:ok, room_pid} ->
           PlayerPresence.list(room_id)
           |> Map.keys()
-          |> Enum.map(&Room.add_player(room_pid, &1))
+          |> Enum.each(&Room.add_player(room_pid, &1))
 
           CoupGameWeb.Endpoint.broadcast(room_id, "game_start", %{room_pid: room_pid})
 
