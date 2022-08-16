@@ -7,17 +7,21 @@ defmodule CoupGame.Game.State do
   Represents a single card from the deck
   """
   @type t() :: %__MODULE__{
-    public_state: map(),
-    player_view: map(),
-    priv_state: map(),
+    coins: list(integer()),
+    turn: integer(),
+    turn_order: list(charlist()),
+    court: list(CoupGame.Card.t()),
+    hands: map(),
     game_stack: list(),
     players: nonempty_list()
   }
 
   defstruct [:players,
-            public_state: %{},
-            player_view: %{},
-            priv_state: %{},
+            coins: [],
+            turn: 0,
+            turn_order: [],
+            court: [],
+            hands: [],
             game_stack: []]
 
   @spec new(list) :: :error | %__MODULE__{}
@@ -32,6 +36,8 @@ defmodule CoupGame.Game.State do
   end
   def new(_), do: :error
 
+  def public_states(), do: [:coins, :turn, :turn_order]
+
   defp create_new(players) do
     n = Enum.count(players)
     {court_deck, player_decks} = CoupGame.Carddeck.deal_deck(n)
@@ -43,21 +49,13 @@ defmodule CoupGame.Game.State do
                 |> Enum.with_index()
                 |> Enum.into(%{})
 
-    public = %{
+    %__MODULE__{
+      players: players,
       coins: Enum.zip([players, Stream.repeatedly(fn -> 2 end)]) |> Enum.into(%{}),
       turn: 0,
       turn_order: turn_order,
-    }
-
-    priv = %{
       court: court_deck,
       hands: player_hands,
-    }
-
-    %__MODULE__{
-      players: players,
-      public_state: public,
-      priv_state: priv,
     }
   end
 end

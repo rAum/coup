@@ -19,7 +19,7 @@ defmodule CoupGame.Game.StateTest do
 
   test "Each player starts with two coins" do
     players = [1, 2, 3]
-    assert %State{public_state: %{ coins: coins}} = State.new(players)
+    assert %State{coins: coins} = State.new(players)
     assert coins
     |> Map.values()
     |> Enum.all?(fn n -> n == 2 end)
@@ -28,7 +28,7 @@ defmodule CoupGame.Game.StateTest do
   test "Each player starts with two cards and rest is in court deck" do
     for player_count <- 2..7 do
       players = Enum.into(1..player_count, [])
-      assert %State{priv_state: %{ hands: hands, court: court_deck}} = State.new(players)
+      assert %State{hands: hands, court: court_deck} = State.new(players)
       assert hands
       |> Map.values()
       |> Enum.all?(fn cards -> length(cards) == 2 end)
